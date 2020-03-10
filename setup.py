@@ -14,7 +14,7 @@ import io
 import os
 import re
 
-import setuptools
+from setuptools import find_packages, setup
 
 
 def read(path):
@@ -35,7 +35,7 @@ def parse_version_from(path):
     return version_match.group(1)
 
 
-setuptools.setup(
+setup(
     name="eccodes-python",
     version=parse_version_from("gribapi/bindings.py"),
     description="Python interface to the ecCodes GRIB and BUFR decoder/encoder",
@@ -44,8 +44,12 @@ setuptools.setup(
     author_email="software.support@ecmwf.int",
     license="Apache License Version 2.0",
     url="https://github.com/ecmwf/eccodes-python",
-    packages=setuptools.find_packages(),
+    packages=find_packages(),
     include_package_data=True,
+    ext_package="eccodes",
+    cffi_modules=["builder.py:ffibuilder"],
+    include_dirs=["/usr/include/eccodes", "/usr/local/include/eccodes"],
+    data_files=[('lib', ['gribapi/grib_api.h', 'gribapi/eccodes.h'])],
     install_requires=["attrs", "cffi", "numpy",],
     tests_require=["pytest", "pytest-cov", "pytest-flakes",],
     test_suite="tests",
